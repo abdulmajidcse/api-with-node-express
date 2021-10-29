@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const configApp = require("./config/app");
+const { body, validationResult } = require("express-validator");
 
 // parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: false }));
@@ -11,14 +12,24 @@ app.get("/", function (req, res) {
   res.send(`Welcome to ${configApp.name}`);
 });
 
-app.post("/todos", function (req, res) {
-  const response = {
-    success: true,
-    data: req.body,
-  };
+app.post(
+  "/todos",
+  body("title").notEmpty().isLength({ min: 3 }),
+  body("details").notEmpty().isLength({ min: 5 }),
+  function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
 
-  res.json(response);
-});
+    const response = {
+      success: true,
+      data: req.body,
+    };
+
+    res.json(response);
+  }
+);
 
 app.listen(configApp.port, function () {
   console.log(`App listening at http://localhost:${configApp.port}`);
