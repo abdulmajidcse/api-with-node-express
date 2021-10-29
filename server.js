@@ -1,8 +1,6 @@
 const express = require("express");
 const app = express();
 const configApp = require("./config/app");
-const multer = require('multer');
-const formData = multer();
 
 // parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: false }));
@@ -13,13 +11,13 @@ app.get("/", function (req, res) {
   res.send(`Welcome to ${configApp.name}`);
 });
 
-app.post("/todos", formData.none(), function (req, res) {
+app.post("/todos", function (req, res) {
   const response = {
     success: true,
     data: req.body,
   };
 
-  res.send(response);
+  res.json(response);
 });
 
 app.listen(configApp.port, function () {
