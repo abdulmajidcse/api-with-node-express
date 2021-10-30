@@ -1,6 +1,23 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const { body, validationResult, checkSchema } = require("express-validator");
+const collection = require("../database/mongodb");
+
+router.get("/", async function (req, res) {
+  const Todo = collection("todos");
+  const todos = (await Todo).find({}).toArray();
+  todos
+    .then((response) => {
+      res.json({
+        todos: response,
+      });
+    })
+    .catch((error) => {
+      res.json({
+        error: error,
+      });
+    });
+});
 
 router.post(
   "/",
@@ -28,20 +45,29 @@ router.post(
       },
     },
   }),
-  function (req, res) {
+  async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
     }
 
-    const response = {
-      success: true,
-      data: req.body,
-    };
-
-    res.json(response);
+    // create todo collection
+    const todo = (await collection("todos")).insertOne({
+      title: req.body.title,
+      details: req.body.details,
+    });
+    todo
+      .then((response) => {
+        res.json({
+          users: response,
+        });
+      })
+      .catch((error) => {
+        res.json({
+          error: error,
+        });
+      });
   }
 );
-
 
 module.exports = router;
