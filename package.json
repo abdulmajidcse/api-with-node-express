@@ -2,9 +2,9 @@
   "name": "api-with-node-express",
   "version": "1.0.0",
   "description": "A api providing app with node, expressjs.",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon app.js"
   },
   "keywords": [
     "node",
