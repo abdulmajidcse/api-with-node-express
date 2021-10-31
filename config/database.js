@@ -2,8 +2,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const database = {
-    "url": process.env.MONGODB_URL ? process.env.MONGODB_URL : 'mongodb://localhost:27017',
-    "dbName": process.env.MONGODB_NAME ? process.env.MONGODB_NAME : 'test',
+    "uri": process.env.MONGODB_URI ? process.env.MONGODB_URI : 'mongodb://localhost:27017/test',
 };
 
 module.exports = database;

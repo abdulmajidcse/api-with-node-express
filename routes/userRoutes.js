@@ -1,22 +1,23 @@
 const express = require("express");
 const router = express.Router();
 const { checkSchema, validationResult } = require("express-validator");
-const collection = require("../database/mongodb");
+const User = require("../app/models/user");
 
 router.get("/", async function (req, res) {
-  const User = collection("users");
-  const users = (await User).find({}).toArray();
-  users
-    .then((response) => {
-      res.json({
-        users: response,
-      });
-    })
-    .catch(() => {
-      res.status(500).json({
-        error: "Something went wrong to get users!",
-      });
+  try {
+    const users = await User.find();
+
+    res.json({
+      success: true,
+      message: "All User information.",
+      users: users,
     });
+  } catch (error) {
+    res.status(422).json({
+      success: false,
+      message: "Something went wrong to get users.",
+    });
+  }
 });
 
 router.post(
@@ -63,24 +64,24 @@ router.post(
       return res.status(422).json({ errors: errors.array() });
     }
 
-    // create user collection
-    const User = collection("users");
-    const createUser = (await User).insertOne({
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password,
-    });
-    createUser
-      .then((response) => {
-        res.json({
-          users: response,
-        });
-      })
-      .catch(() => {
-        res.json({
-          error: "Something went wrong to create user.",
-        });
+    try {
+      // create user collection
+      const createUser = await User.create({
+        name: req.body.name,
+        email: req.body.email,
+        password: req.body.password,
       });
+
+      res.json({
+        success: true,
+        message: "User created.",
+        user: createUser,
+      });
+    } catch (error) {
+      res.status(422).json({
+        error: "Something went wrong to create user.",
+      });
+    }
   }
 );
 
